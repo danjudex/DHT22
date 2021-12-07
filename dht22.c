@@ -5,13 +5,11 @@
  * Forked from: https://github.com/ccoong7/DHT22
  */
 
-
 #include <stdio.h>
 #include <wiringPi.h>
 
-static const unsigned short signal = 18;
+static const unsigned short signal = 2;
 unsigned short data[5] = {0, 0, 0, 0, 0};
-
 
 short readData()
 {
@@ -40,20 +38,20 @@ short readData()
 		// If signal is HIGH
 		if (signal_length > 0)
 		{
-			loop_counter++;	// HIGH signal counting
+			loop_counter++; // HIGH signal counting
 
 			// The DHT22 sends a lot of unstable signals.
 			// So extended the counting range.
 			if (signal_length < 10)
 			{
 				// Unstable signal
-				val <<= 1;		// 0 bit. Just shift left
+				val <<= 1; // 0 bit. Just shift left
 			}
 
 			else if (signal_length < 30)
 			{
 				// 26~28us means 0 bit
-				val <<= 1;		// 0 bit. Just shift left
+				val <<= 1; // 0 bit. Just shift left
 			}
 
 			else if (signal_length < 85)
@@ -70,8 +68,8 @@ short readData()
 				return -1;
 			}
 
-			signal_length = 0;	// Initialize signal length for next signal
-			val_counter++;		// Count for 8 bit data
+			signal_length = 0; // Initialize signal length for next signal
+			val_counter++;	   // Count for 8 bit data
 		}
 
 		// The first and second signal is DHT22's start signal.
@@ -94,7 +92,6 @@ short readData()
 	}
 }
 
-
 int main(void)
 {
 	float humidity;
@@ -103,7 +100,7 @@ int main(void)
 	short checksum;
 
 	// GPIO Initialization
-	if (wiringPiSetupGpio() == -1)
+	if (wiringPiSetup() == -1)
 	{
 		printf("[x_x] GPIO Initialization FAILED.\n");
 		return -1;
@@ -115,10 +112,10 @@ int main(void)
 
 		// Send out start signal
 		digitalWrite(signal, LOW);
-		delay(20);					// Stay LOW for 5~30 milliseconds
-		pinMode(signal, INPUT);		// 'INPUT' equals 'HIGH' level. And signal read mode
+		delay(20);				// Stay LOW for 5~30 milliseconds
+		pinMode(signal, INPUT); // 'INPUT' equals 'HIGH' level. And signal read mode
 
-		readData();		// Read DHT22 signal
+		readData(); // Read DHT22 signal
 
 		// The sum is maybe over 8 bit like this: '0001 0101 1010'.
 		// Remove the '9 bit' data using AND operator.
@@ -129,7 +126,7 @@ int main(void)
 		{
 			// * 256 is the same thing '<< 8' (shift).
 			humidity = ((data[0] * 256) + data[1]) / 10.0;
-			
+
 			// found that with the original code at temperatures > 25.4 degrees celsius
 			// the temperature would print 0.0 and increase further from there.
 			// Eventually when the actual temperature drops below 25.4 again
@@ -137,7 +134,7 @@ int main(void)
 			// Some research and comparisin with other C implementation suggest a
 			// different calculation of celsius.
 			//celsius = data[3] / 10.0; //original
-			celsius = (((data[2] & 0x7F)*256) + data[3]) / 10.0; //Juergen Wolf-Hofer
+			celsius = (((data[2] & 0x7F) * 256) + data[3]) / 10.0; //Juergen Wolf-Hofer
 
 			// If 'data[2]' data like 1000 0000, It means minus temperature
 			if (data[2] == 0x80)
@@ -163,7 +160,7 @@ int main(void)
 			data[i] = 0;
 		}
 
-		delay(2000);	// DHT22 average sensing period is 2 seconds
+		delay(2000); // DHT22 average sensing period is 2 seconds
 	}
 
 	return 0;

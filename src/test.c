@@ -8,18 +8,15 @@
 #include <stdio.h>
 #include <wiringPi.h>
 
+// #define NUM 20 //26pin
+
 // static const unsigned short signal = 7;
 
 int main(void)
 {
-	// GPIO Initialization
-	if (wiringPiSetupGpio() == -1)
-	{
-		printf("[x_x] GPIO Initialization FAILED.\n");
-		return -1;
-	}
+	wiringPiSetup();
 
-	// pinMode(2, OUTPUT);
+	pinMode(2, INPUT);
 
 	return 0;
 }
