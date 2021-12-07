@@ -106,13 +106,13 @@ int main(void)
 		return -1;
 	}
 
-	for (unsigned char i = 0; i < 10; i++)
+	for (unsigned char i = 0; i < 100; i++)
 	{
 		pinMode(signal, OUTPUT);
 
 		// Send out start signal
 		digitalWrite(signal, LOW);
-		delay(20);				// Stay LOW for 5~30 milliseconds
+		delay(10);				// Stay LOW for 5~30 milliseconds
 		pinMode(signal, INPUT); // 'INPUT' equals 'HIGH' level. And signal read mode
 
 		readData(); // Read DHT22 signal
@@ -146,7 +146,7 @@ int main(void)
 
 			// Display all data
 			printf("TEMP: %6.2f *C (%6.2f *F) | HUMI: %6.2f %\n\n", celsius, fahrenheit, humidity);
-			return 0;
+			// return 0;
 		}
 
 		else
